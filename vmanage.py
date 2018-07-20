@@ -13,6 +13,7 @@ PARAMETERS:
 
 Note: All the three arguments are manadatory
 """
+
 import requests
 import sys
 import json
@@ -27,7 +28,7 @@ class rest_api_lib:
         self.login(self.vmanage_ip, username, password)
 
     def login(self, vmanage_ip, username, password):
-        """Login to vmanage"""
+        #Login to vmanage
         base_url_str = 'https://%s/'%vmanage_ip
 
         login_action = '/j_security_check'
@@ -66,6 +67,21 @@ class rest_api_lib:
 
 # Methods
 
+def getInventory(obj):
+    response = obj.get_request('system/dataservice/device')
+    json_data = json.loads(response)
+    print(json_data)
+    for item in json_data['data']:
+        print(item)
+
+    # Initialize the inventory data dictionary
+    inv = {}
+    # Store each item in the dictionary with the key of the "system-ip"
+    for item in json_string['data']:
+    #   print (item['local-system-ip']+"   "+item['host-name'])
+        inv[item['system-ip']] = item['host-name']
+    return(inv)
+    
 def listEdges(obj):
     response = obj.get_request('system/device/vedges')
     json_data = json.loads(response)
@@ -88,7 +104,41 @@ def getTenants(obj):
         entry = [item['tenantName'], item['tenantId']]
         tenantList.append(dict(zip(keys, entry)))
     return tenantList
-        
+    
+def getStats(obj,systemIP):
+    response = obj.get_request('dataservice/device/interface/stats?deviceId="+system_ip')
+    json_data = json.loads(response)['data']
+
+def getTunnelStats(obj):
+    """docstring for getTunnelStats"""
+    pass
+
+def getOSPFRoutes(obj):
+    response = obj.get_request('device/ospf/routes?deviceId=169.254.10.9')
+    json_data = json.loads(response)['data']
+    #return json_data
+    for route in json_data:
+        print route['prefix']
+    
+def getOSPFNeighbors(obj):
+    response = obj.get_request('device/ospf/neighbor?deviceId=169.254.10.9')
+    json_data = json.loads(response)['data']
+    neighborList = []
+    keys = ['Neighbor State', 'Router ID']
+    for route in json_data:
+        entry = route['neighbor-state'], route['router-id']
+        neighborList.append(zip(keys, entry))
+    return neighborList
+
+def getBGPRoutes(obj):
+    """docstring for bgpRoutes"""
+    pass
+    
+def getBGPNeighbors(obj):
+    """docstring for getBGPNeighbors"""
+    pass
+
+
 def main(args):
     if not len(args) == 3:
         print __doc__
@@ -96,9 +146,12 @@ def main(args):
     vmanage_ip, username, password = args[0], args[1], args[2]
     obj = rest_api_lib(vmanage_ip, username, password)
     
-    print getTenants(obj)
+    #print getTenants(obj)
+    #print "--------"
+    #print listEdges(obj)
+    print getOSPFNeighbors(obj)
     print "--------"
-    print listEdges(obj)
+    print getOSPFRoutes(obj)
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
