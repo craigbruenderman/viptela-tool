@@ -20,6 +20,9 @@ import json
 import urllib
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+from tabulate import tabulate
+import viptela
+
 
 class rest_api_lib:
     def __init__(self, vmanage_ip, username, password):
@@ -53,7 +56,7 @@ class rest_api_lib:
     def get_request(self, mount_point):
         """GET request"""
         url = "https://%s:443/dataservice/%s"%(self.vmanage_ip, mount_point)
-        print url
+        #print url
         response = self.session[self.vmanage_ip].get(url, verify=False)
         data = response.content
         return data
@@ -65,79 +68,6 @@ class rest_api_lib:
         response = self.session[self.vmanage_ip].post(url=url, data=payload, headers=headers, verify=False)
         data = response.content
 
-# Methods
-
-def getInventory(obj):
-    response = obj.get_request('system/dataservice/device')
-    json_data = json.loads(response)
-    print(json_data)
-    for item in json_data['data']:
-        print(item)
-
-    # Initialize the inventory data dictionary
-    inv = {}
-    # Store each item in the dictionary with the key of the "system-ip"
-    for item in json_string['data']:
-    #   print (item['local-system-ip']+"   "+item['host-name'])
-        inv[item['system-ip']] = item['host-name']
-    return(inv)
-    
-def listEdges(obj):
-    response = obj.get_request('system/device/vedges')
-    json_data = json.loads(response)
-    edgeList = []
-    keys = ['uuid', 'hostname', 'local-system-ip']
-    for edge in json_data['data']:
-        if edge.has_key('uuid'):
-            if edge.has_key('host-name'):
-                if edge.has_key('local-system-ip'):
-                    entry = [edge['uuid'], edge['host-name'], edge['local-system-ip']]
-                    edgeList.append(dict(zip(keys, entry)))
-    return edgeList
-    
-def getTenants(obj):
-    response = obj.get_request('tenantstatus')
-    json_data = json.loads(response)
-    tenantList = []
-    keys = ['TenantName', 'TenantID']
-    for item in json_data['data']:
-        entry = [item['tenantName'], item['tenantId']]
-        tenantList.append(dict(zip(keys, entry)))
-    return tenantList
-    
-def getStats(obj,systemIP):
-    response = obj.get_request('dataservice/device/interface/stats?deviceId="+system_ip')
-    json_data = json.loads(response)['data']
-
-def getTunnelStats(obj):
-    """docstring for getTunnelStats"""
-    pass
-
-def getOSPFRoutes(obj):
-    response = obj.get_request('device/ospf/routes?deviceId=169.254.10.9')
-    json_data = json.loads(response)['data']
-    #return json_data
-    for route in json_data:
-        print route['prefix']
-    
-def getOSPFNeighbors(obj):
-    response = obj.get_request('device/ospf/neighbor?deviceId=169.254.10.9')
-    json_data = json.loads(response)['data']
-    neighborList = []
-    keys = ['Neighbor State', 'Router ID']
-    for route in json_data:
-        entry = route['neighbor-state'], route['router-id']
-        neighborList.append(zip(keys, entry))
-    return neighborList
-
-def getBGPRoutes(obj):
-    """docstring for bgpRoutes"""
-    pass
-    
-def getBGPNeighbors(obj):
-    """docstring for getBGPNeighbors"""
-    pass
-
 
 def main(args):
     if not len(args) == 3:
@@ -148,10 +78,22 @@ def main(args):
     
     #print getTenants(obj)
     #print "--------"
-    #print listEdges(obj)
-    print getOSPFNeighbors(obj)
-    print "--------"
-    print getOSPFRoutes(obj)
+    for edge in viptela.listEdges(obj):
+        #print edge['managementSystemIP']
+        #print edge
+
+        neighbors = viptela.getOSPFNeighbors(obj, edge['managementSystemIP'])
+        if neighbors:
+            for neighbor in neighbors:
+                print neighbor
+                #printTable(neighbor, neighbors[0].keys())
+
+#        ospfRoutes = getOSPFRoutes(obj, edge['managementSystemIP'])
+#        if ospfRoutes:
+#            print ospfRoutes[0].keys()
+#            for route in ospfRoutes:
+#                print route
+#                
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
