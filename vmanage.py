@@ -16,7 +16,6 @@ Note: All the three arguments are manadatory
 
 import requests
 import sys
-import json
 import urllib
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -68,6 +67,10 @@ class rest_api_lib:
         response = self.session[self.vmanage_ip].post(url=url, data=payload, headers=headers, verify=False)
         data = response.content
 
+def printTable(list, headers):
+    print tabulate(list, headers)
+
+
 
 def main(args):
     if not len(args) == 3:
@@ -76,24 +79,20 @@ def main(args):
     vmanage_ip, username, password = args[0], args[1], args[2]
     obj = rest_api_lib(vmanage_ip, username, password)
     
-    #print getTenants(obj)
-    #print "--------"
-    for edge in viptela.listEdges(obj):
-        #print edge['managementSystemIP']
-        #print edge
+    tenants = viptela.getTenants(obj)
+    print tabulate(tenants, headers="keys")
+    
+    vedges = viptela.listEdges(obj)
+    edge = vedges[1]
+    print tabulate(vedges, headers="keys")
+    
+    neighbors = viptela.getOSPFNeighbors(obj, edge['managementSystemIP'])
+    if neighbors:
+        print tabulate(neighbors, headers="keys")
 
-        neighbors = viptela.getOSPFNeighbors(obj, edge['managementSystemIP'])
-        if neighbors:
-            for neighbor in neighbors:
-                print neighbor
-                #printTable(neighbor, neighbors[0].keys())
-
-#        ospfRoutes = getOSPFRoutes(obj, edge['managementSystemIP'])
-#        if ospfRoutes:
-#            print ospfRoutes[0].keys()
-#            for route in ospfRoutes:
-#                print route
-#                
+    ospfRoutes = viptela.getOSPFRoutes(obj, edge['managementSystemIP'])
+    if ospfRoutes:
+        print tabulate(ospfRoutes, headers="keys")
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))

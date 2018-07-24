@@ -4,19 +4,15 @@ import json
 # Methods
 
 def getInventory(obj):
-    response = obj.get_request('system/dataservice/device')
+    response = obj.get_request('system/device/vedges')
     json_data = json.loads(response)
-    print(json_data)
-    for item in json_data['data']:
-        print(item)
 
-    # Initialize the inventory data dictionary
-    inv = {}
-    # Store each item in the dictionary with the key of the "system-ip"
-    for item in json_string['data']:
-    #   print (item['local-system-ip']+"   "+item['host-name'])
-        inv[item['system-ip']] = item['host-name']
-    return(inv)
+    inventoryList = []
+    entry = []
+    for item in json_data['data']:
+        entry = [item['system-ip'],  item['host-name']]
+        inventoryList.append(entry)
+    return inventoryList
     
     
 def listEdges(obj):
@@ -59,9 +55,24 @@ def getRoutes(obj):
     #GET /device/ip/routetable
     pass
 
+
+def getBFDSummary(obj, systemIP):
+    u = "dataservice/device/bfd/summary?deviceId=%s" % (systemIP)
+    response = obj.get_request(u)
+    #json_data = json.loads(response)['data']
+    #return json_data
+
+
+def getBFDDowns(obj, systemIP):
+    u = "dataservice/device/bfd/history?deviceId=%s" % (systemIP)
+    response = obj.get_request(u)
+    json_data = json.loads(response)['data']
+    print json_data
+
     
-def getStats(obj,systemIP):
-    response = obj.get_request('dataservice/device/interface/stats?deviceId="+system_ip')
+def getStats(obj, systemIP):
+    u = "dataservice/device/interface/stats?deviceId=%s" % (system_ip)
+    response = obj.get_request(u)
     json_data = json.loads(response)['data']
 
 
@@ -71,7 +82,7 @@ def getTunnelStats(obj):
 
 
 def getOSPFRoutes(obj, systemIP):
-    u = "device/ospf/routes?deviceId=%s"%(systemIP)
+    u = "device/ospf/routes?deviceId=%s" % (systemIP)
     try: 
         response = obj.get_request(u)
         json_data = json.loads(response)['data']
@@ -92,7 +103,7 @@ def getOSPFRoutes(obj, systemIP):
     
 
 def getOSPFNeighbors(obj, systemIP):
-    u = "device/ospf/neighbor?deviceId=%s"%(systemIP)        
+    u = "device/ospf/neighbor?deviceId=%s" % (systemIP)        
     try: 
         response = obj.get_request(u)
         json_data = json.loads(response)['data']
@@ -116,8 +127,3 @@ def getBGPRoutes(obj):
 def getBGPNeighbors(obj):
     """docstring for getBGPNeighbors"""
     pass
-
-
-
-def printTable(list, headers):
-    print tabulate(list, headers)
