@@ -3,32 +3,29 @@ import json
 
 # Methods
 
-def getInventory(obj):
-    response = obj.get_request('system/device/vedges')
-    json_data = json.loads(response)
-
-    inventoryList = []
-    entry = []
-    for item in json_data['data']:
-        entry = [item['system-ip'],  item['host-name']]
-        inventoryList.append(entry)
-    return inventoryList
-    
-    
-def listEdges(obj):
+def getEdges(obj):
     response = obj.get_request('system/device/vedges')
     json_data = json.loads(response)
     #print json_data['data']
     edgeList = []
-    keys = ['uuid', 'hostname', 'local-system-ip', 'managementSystemIP']
+    keys = ['uuid', 'hostname', 'deviceModel', 'local-system-ip', 'managementSystemIP', 'serialNumber']
     for edge in json_data['data']:
-        if edge.has_key('uuid'):
-            if edge.has_key('host-name'):
-                if edge.has_key('local-system-ip'):
-                    entry = [edge['uuid'], edge['host-name'], edge['local-system-ip'], edge['managementSystemIP']]
-                    edgeList.append(dict(zip(keys, entry)))
+        entry = [edge['uuid'], edge['host-name'], edge['deviceModel'], edge['local-system-ip'], edge['managementSystemIP'], edge['serialNumber']]
+        edgeList.append(dict(zip(keys, entry)))
     return edgeList
+
+
+def getRunConf(obj, uuid, attached=False):
+    u = "template/config/running/%s" % (uuid)
+    response = obj.get_request(u)
+    json_data = json.loads(response)
+    print str(json_data['config'])
     
+    
+def getARPTable(obj, deviceID):
+    """docstring for fname"""
+    pass
+
     
 def getTenants(obj):
     response = obj.get_request('tenantstatus')
@@ -40,6 +37,18 @@ def getTenants(obj):
         tenantList.append(dict(zip(keys, entry)))
     return tenantList
 
+
+def getUsers(obj):
+    response = obj.get_request('admin/user')
+    json_data = json.loads(response)
+    return json_data['data']
+
+
+def getFeatureTemplates(obj):
+    response = obj.get_request('template/feature')
+    json_data = json.loads(response)
+    return json_data['data']
+    
 
 def getOMPStatus(obj):
     #GET dataservice/device/omp/status
@@ -117,6 +126,21 @@ def getOSPFNeighbors(obj, systemIP):
         return neighborList
     except:
         print "Failed to get OSPF Neighbors"
+
+
+def getOSPFDatabase():
+    """docstring for getOSPFDatabase"""
+    pass
+
+
+def fname():
+    """docstring for fname"""
+    pass
+
+
+def getBGPSummary():
+    """docstring for getBGPSummary"""
+    pass
 
 
 def getBGPRoutes(obj):

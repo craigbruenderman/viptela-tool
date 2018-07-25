@@ -20,7 +20,7 @@ import urllib
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 from tabulate import tabulate
-import viptela
+import viptela as v
 
 
 class rest_api_lib:
@@ -79,20 +79,38 @@ def main(args):
     vmanage_ip, username, password = args[0], args[1], args[2]
     obj = rest_api_lib(vmanage_ip, username, password)
     
-    tenants = viptela.getTenants(obj)
-    print tabulate(tenants, headers="keys")
+#    tenants = viptela.getTenants(obj)
+#    print "\n"
+#    print tabulate(tenants, headers="keys")
     
-    vedges = viptela.listEdges(obj)
-    edge = vedges[1]
+    vedges = v.getEdges(obj)
+    print "\n"
     print tabulate(vedges, headers="keys")
     
-    neighbors = viptela.getOSPFNeighbors(obj, edge['managementSystemIP'])
-    if neighbors:
-        print tabulate(neighbors, headers="keys")
-
-    ospfRoutes = viptela.getOSPFRoutes(obj, edge['managementSystemIP'])
-    if ospfRoutes:
-        print tabulate(ospfRoutes, headers="keys")
+    # Get running config from sample vEdge
+    #config = v.getRunConf(obj, "11OG403170902")
+    
+    # Get users
+    #users = v.getUsers(obj)
+    #print tabulate(users, headers="keys")
+    
+    # Get feature templates
+    #featureTemplates = v.getFeatureTemplates(obj)
+    #print featureTemplates[1]
+    
+    
+    
+#    for vedge in vedges:
+#        print "\n"
+#        print vedge['managementSystemIP']
+#        neighbors = viptela.getOSPFNeighbors(obj, vedge['managementSystemIP'])
+#        if neighbors:
+#            print "\n"
+#            print tabulate(neighbors, headers="keys")
+#        ospfRoutes = viptela.getOSPFRoutes(obj, vedge['managementSystemIP'])
+#        if ospfRoutes:
+#            print "\n"
+#            print tabulate(ospfRoutes, headers="keys")
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
