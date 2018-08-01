@@ -79,13 +79,18 @@ def main(args):
     vmanage_ip, username, password = args[0], args[1], args[2]
     obj = rest_api_lib(vmanage_ip, username, password)
     
-#    tenants = viptela.getTenants(obj)
-#    print "\n"
-#    print tabulate(tenants, headers="keys")
+    tenants = v.getTenants(obj)
+    print "getTenants()\n"
+    print tabulate(tenants, headers="keys")
     
     vedges = v.getEdges(obj)
-    print "\n"
+    print "getEdges()\n"
     print tabulate(vedges, headers="keys")
+
+#    print v.getStats(obj, "169.254.10.8")
+    
+    #print v.getRunConf(obj, "11OG427170281")
+    #print v.getOSPFRoutes(obj, "169.254.10.8")
     
     # Get running config from sample vEdge
     #config = v.getRunConf(obj, "11OG403170902")

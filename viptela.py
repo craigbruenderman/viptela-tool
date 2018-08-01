@@ -6,7 +6,7 @@ import json
 def getEdges(obj):
     response = obj.get_request('system/device/vedges')
     json_data = json.loads(response)
-    #print json_data['data']
+    print json_data['data']
     edgeList = []
     keys = ['uuid', 'hostname', 'deviceModel', 'local-system-ip', 'managementSystemIP', 'serialNumber']
     for edge in json_data['data']:
@@ -80,7 +80,7 @@ def getBFDDowns(obj, systemIP):
 
     
 def getStats(obj, systemIP):
-    u = "dataservice/device/interface/stats?deviceId=%s" % (system_ip)
+    u = "dataservice/device/interface/stats?deviceId=%s" % (systemIP)
     response = obj.get_request(u)
     json_data = json.loads(response)['data']
 
