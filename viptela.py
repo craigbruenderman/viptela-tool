@@ -5,14 +5,43 @@ import json
 
 def getEdges(obj):
     response = obj.get_request('system/device/vedges')
-    json_data = json.loads(response)
-    print json_data['data']
+    json_data = json.loads(response)['data']
     edgeList = []
     keys = ['uuid', 'hostname', 'deviceModel', 'local-system-ip', 'managementSystemIP', 'serialNumber']
-    for edge in json_data['data']:
-        entry = [edge['uuid'], edge['host-name'], edge['deviceModel'], edge['local-system-ip'], edge['managementSystemIP'], edge['serialNumber']]
+    for edge in json_data:
+        entry = [edge.get('uuid'), edge.get('host-name'), edge.get('deviceModel'), edge.get('local-system-ip'), edge.get('managementSystemIP'), edge.get('serialNumber')]
         edgeList.append(dict(zip(keys, entry)))
     return edgeList
+
+
+def getControlConnections(obj, systemIP, type=None):
+    """Call with type [vsmart|vbond|vmanage], or no type for all"""
+    if type:
+        u = "device/control/connections?deviceId=%s&peer-type=%s" % (systemIP, type)
+    else:
+        u = "device/control/connections?deviceId=%s" % (systemIP)
+    response = obj.get_request(u)
+    json_data = json.loads(response)['data']
+    return json_data
+
+
+def getControlConnectionsHistory(obj, systemIP, type=None):
+    """Call with type [vsmart|vbond|vmanage], or no type for all"""
+    if type:
+        u = "device/control/connectionshistory?deviceId=%s&peer-type=%s" % (systemIP, type)
+    else:
+        u = "device/control/connectionshistory?deviceId=%s" % (systemIP)
+    response = obj.get_request(u)
+    json_data = json.loads(response)['data']
+    return json_data
+
+
+def getLocalProperties(obj, systemIP):
+    u = "device/control/localproperties?deviceId=%s" % (systemIP)
+    response = obj.get_request(u)
+    json_data = json.loads(response)['data']
+    return json_data
+    
 
 
 def getRunConf(obj, uuid, attached=False):
@@ -130,11 +159,6 @@ def getOSPFNeighbors(obj, systemIP):
 
 def getOSPFDatabase():
     """docstring for getOSPFDatabase"""
-    pass
-
-
-def fname():
-    """docstring for fname"""
     pass
 
 
