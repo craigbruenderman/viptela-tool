@@ -82,16 +82,30 @@ def main(args):
     
     vedges = v.getEdges(obj)
     print "getEdges()\n"
-    print tabulate(vedges, headers="keys")
+    print tabulate(vedges, headers="keys", tablefmt="fancy_grid")
     
-    controlConns = v.getControlConnections(obj, "169.254.10.8", "vsmart")
-    print "getControlConnections()\n"
-    print tabulate(controlConns, headers="keys")
+    
+#    controlConns = v.getControlConnections(obj, "169.254.10.8")
+#    print "getControlConnections()\n"
+#    print tabulate(controlConns, headers="keys", tablefmt="fancy_grid")
+ 
+    
+#    history = v.getControlConnectionsHistory(obj, "169.254.10.8")
+#    print "getControlConnectionsHistory()\n"
+#    for e in history:
+#        print([e.get("local_enum-desc"), e.get("remote_enum-desc")])
+#    print tabulate(history, headers="keys")
+
+
+#    localProps = v.getLocalProperties(obj, "169.254.10.8")
+#    print(localProps)
+
 
 #    print v.getStats(obj, "169.254.10.8")
+
     
-    #print v.getRunConf(obj, "11OG427170281")
-    #print v.getOSPFRoutes(obj, "169.254.10.8")
+#    print v.getRunConf(obj, "11OG427170281")
+#    print v.getOSPFRoutes(obj, "169.254.10.8")
     
     # Get running config from sample vEdge
     #config = v.getRunConf(obj, "11OG403170902")
