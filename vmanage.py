@@ -67,25 +67,26 @@ class rest_api_lib:
         response = self.session[self.vmanage_ip].post(url=url, data=payload, headers=headers, verify=False)
         data = response.content
 
-def printTable(list, headers):
-    print tabulate(list, headers)
-
-
 
 def main(args):
     if not len(args) == 3:
         print __doc__
         return
+
     vmanage_ip, username, password = args[0], args[1], args[2]
     obj = rest_api_lib(vmanage_ip, username, password)
     
-    tenants = v.getTenants(obj)
-    print "getTenants()\n"
-    print tabulate(tenants, headers="keys")
+    #tenants = v.getTenants(obj)
+    #print "getTenants()\n"
+    #print tabulate(tenants, headers="keys")
     
     vedges = v.getEdges(obj)
     print "getEdges()\n"
     print tabulate(vedges, headers="keys")
+    
+    controlConns = v.getControlConnections(obj, "169.254.10.8", "vsmart")
+    print "getControlConnections()\n"
+    print tabulate(controlConns, headers="keys")
 
 #    print v.getStats(obj, "169.254.10.8")
     
