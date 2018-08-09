@@ -76,9 +76,9 @@ def main(args):
     vmanage_ip, username, password = args[0], args[1], args[2]
     obj = rest_api_lib(vmanage_ip, username, password)
     
-    #tenants = v.getTenants(obj)
-    #print "getTenants()\n"
-    #print tabulate(tenants, headers="keys")
+    tenants = v.getTenants(obj)
+    print "getTenants()\n"
+    print tabulate(tenants, headers="keys")
     
     vedges = v.getEdges(obj)
     print "getEdges()\n"
