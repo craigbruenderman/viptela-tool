@@ -1,6 +1,10 @@
 # viptela-tool
 
-My feeble attempt at using the multi-tenant Viptela API.
+viptela-tool is a library designed to make the Viptela (Cisco SD-WAN) API more consumable. It is being developed based on the needs of the communications practice I work in, which focuses healivy on SD-WAN excellence.
+
+The Viptela product itself is undergoing a high velocity of change, especially due to the Cisco acquisition, and the project will tend to lag behind the current state of the API. Some of the initial work was done against a multi-tenant instance of vManage, which is currently undergoing an overhaul and direction changes which we hear may be available in early 2019.
+
+The initial focus of the tool is GET operations to provide insight into vManage and vEdge state. Going forward, PUT/POST functions will be added to assist with provisioning.
 
 ## Installation
 
